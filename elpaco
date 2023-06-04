@@ -1,0 +1,94 @@
+import pygame
+import random
+
+# Initialize Pygame
+pygame.init()
+
+# Set up the game window
+screen_width = 800
+screen_height = 600
+screen = pygame.display.set_mode((screen_width, screen_height))
+pygame.display.set_caption("Pac-Man")
+
+# Set up colors
+BLACK = (0, 0, 0)
+YELLOW = (255, 255, 0)
+BLUE = (0, 0, 255)
+
+# Set up game variables
+pacman_x = 400
+pacman_y = 300
+pacman_radius = 15
+pacman_direction = "right"
+
+ghost_x = random.randint(0, screen_width)
+ghost_y = random.randint(0, screen_height)
+ghost_radius = 20
+ghost_direction = "left"
+
+clock = pygame.time.Clock()
+
+# Game loop
+running = True
+while running:
+    # Handle events
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Update game logic
+    if pacman_direction == "right":
+        pacman_x += 5
+    elif pacman_direction == "left":
+        pacman_x -= 5
+    elif pacman_direction == "up":
+        pacman_y -= 5
+    elif pacman_direction == "down":
+        pacman_y += 5
+
+    if ghost_direction == "left":
+        ghost_x -= 3
+    elif ghost_direction == "right":
+        ghost_x += 3
+    elif ghost_direction == "up":
+        ghost_y -= 3
+    elif ghost_direction == "down":
+        ghost_y += 3
+
+    # Check for collision between Pac-Man and ghost
+    distance = ((pacman_x - ghost_x) ** 2 + (pacman_y - ghost_y) ** 2) ** 0.5
+    if distance < pacman_radius + ghost_radius:
+        running = False  # Game over if Pac-Man collides with the ghost
+
+    # Check for screen boundaries
+    if pacman_x < 0 or pacman_x > screen_width or pacman_y < 0 or pacman_y > screen_height:
+        running = False  # Game over if Pac-Man goes off-screen
+
+    # Handle keyboard input
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_RIGHT]:
+        pacman_direction = "right"
+    elif keys[pygame.K_LEFT]:
+        pacman_direction = "left"
+    elif keys[pygame.K_UP]:
+        pacman_direction = "up"
+    elif keys[pygame.K_DOWN]:
+        pacman_direction = "down"
+
+    # Clear the screen
+    screen.fill(BLACK)
+
+    # Draw Pac-Man
+    pygame.draw.circle(screen, YELLOW, (pacman_x, pacman_y), pacman_radius)
+
+    # Draw the ghost
+    pygame.draw.circle(screen, BLUE, (ghost_x, ghost_y), ghost_radius)
+
+    # Update the display
+    pygame.display.update()
+
+    # Set the frame rate
+    clock.tick(60)
+
+# Quit the game
+pygame.quit()
